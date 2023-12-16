@@ -3,16 +3,22 @@
     <h1>{{ msg }}</h1>
   </div>
 	<div id="calendar">
-		Calendar
+		<PageLink linkText="Calendar"/>
+		<PageLink linkText="Portfolio"/>
 	</div>
 </template>
 
 <script>
+import PageLink from './uielems/PageLink.vue'
+
 export default {
-  name: 'HelloWorld',
+  name: 'MainPage',
   props: {
     msg: String
-  }
+  },
+	components: {
+		PageLink
+	}
 }
 </script>
 
