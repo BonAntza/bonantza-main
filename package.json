@@ -9,15 +9,18 @@
     "node": "18.x"
   },
   "dependencies": {
+    "@vercel/postgres": "^0.5.1",
     "core-js": "^3.30.2",
+    "dotenv": "^16.3.1",
+    "pg": "^8.11.3",
     "vue": "^3.3.4"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.21.8",
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-plugin-eslint": "~5.0.8",
     "@vue/cli-service": "~5.0.8",
     "@vue/compiler-sfc": "^3.3.4",
-    "@babel/eslint-parser": "^7.21.8",
     "eslint": "^8.4.1",
     "eslint-plugin-vue": "^9.14.0"
   },
@@ -39,5 +42,12 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "name": "bonantza-main",
+  "description": "This directory is a brief example of a [Vue.js](https://vuejs.org/) app that can be deployed to Vercel with zero configuration.",
+  "version": "1.0.0",
+  "main": "babel.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
