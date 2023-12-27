@@ -2,10 +2,14 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
   </div>
-	<div id="calendar">
-		<PageLink linkText="Calendar"/>
-		<PageLink linkText="Portfolio"/>
-	</div>
+  <div id="calendar">
+    <PageLink 
+      v-for="link in links" 
+      :key="link.text" 
+      :linkText="link.text" 
+      @click="handleClick(link.text)" 
+    />
+  </div>
 </template>
 
 <script>
@@ -16,13 +20,32 @@ export default {
   props: {
     msg: String
   },
-	components: {
-		PageLink
-	}
+  components: {
+    PageLink
+  },
+  data() {
+    return {
+      links: [
+        { text: "Calendar" },
+        { text: "Portfolio" },
+        { text: "Authentication" }
+      ]
+    }
+  },
+  methods: {
+    handleClick(linkText) {
+      switch (linkText) {
+        case 'Authentication': {
+          const isLoggedIn = localStorage.getItem('authToken') !== null;
+          this.$router.push(isLoggedIn ? '/authenticated-page' : '/login');
+          break;
+        }
+      }
+    },
+  }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;

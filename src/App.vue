@@ -1,16 +1,12 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
-  <MainPage msg=""/>
+  <router-view></router-view>
 </template>
 
 <script>
-import MainPage from './components/MainPage.vue'
 
 export default {
   name: 'App',
-  components: {
-    MainPage
-  }
 }
 </script>
 
