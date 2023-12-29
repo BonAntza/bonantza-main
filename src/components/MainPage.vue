@@ -26,9 +26,10 @@ export default {
   data() {
     return {
       links: [
-        { text: "Calendar" },
-        { text: "Portfolio" },
-        { text: "Authentication" }
+        { text: "GameDevPortfolio" },
+        { text: "WebDevPortfolio" },
+        { text: "Authentication" },
+        { text: "Ammokrates" },
       ]
     }
   },

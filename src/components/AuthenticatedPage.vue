@@ -23,7 +23,7 @@ export default {
   methods: {
     async checkAccess() {
       try {
-        const response = await fetch('./api/protected', {
+        const response = await fetch('./api/verifyLogin', {
           headers: {
             'Authorization': localStorage.getItem('authToken')
           }

@@ -2,7 +2,13 @@ const jwt = require('jsonwebtoken');
 
 // Include the verifyUser logic here or import it from another module if needed
 const verifyUser = async (username, password) => {
-  // Your user verification logic goes here
+
+  // Admin authentication
+  if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
+    return { username };
+  }
+
+  // Regular user authentication
   if (username === "bonantza" && password === "password") {
     return { username }; // Dummy user object
   }

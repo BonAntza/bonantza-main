@@ -38,6 +38,7 @@ export default {
           this.$router.push('/authenticated-page')
         } else {
           // Handle login failure (e.g., show an error message)
+          alert("NO ACCESS");
           console.error('Authentication failed.');
         }
       } catch (error) {
