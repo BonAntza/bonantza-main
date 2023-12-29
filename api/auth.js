@@ -1,38 +1,68 @@
+const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const CIPHER = process.env.CIPHER;
 
-// Include the verifyUser logic here or import it from another module if needed
+// Database pool
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+const getUserDataByUsername = async (username) => {
+  try {
+    const query = "SELECT * FROM users WHERE username = $1";
+    const { rows } = await pool.query(query, [username]);
+    return rows.length > 0 ? rows[0] : null;
+  } catch (err) {
+    throw err;
+  }
+};
+
 const verifyUser = async (username, password) => {
 
-  // Admin authentication
+  // Admin authentication.
   if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
-    return { username };
+    return username;
   }
 
-  // Regular user authentication
-  if (username === "bonantza" && password === "password") {
-    return { username }; // Dummy user object
+  try {
+    const user = await getUserDataByUsername(username);
+
+    if (user) {
+      const combinedValue = user.guardian + CIPHER + password;
+      const isMatch = await bcrypt.compare(combinedValue, user.hash);
+
+      if (isMatch) {
+        return user.username;
+      }
+    }
+
+    // Authentication failed.
+    return null;
+  } catch (err) {
+    throw err;
   }
-  return null;
 };
 
 module.exports = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Use the verifyUser function to check the user's credentials
-    const user = await verifyUser(username, password);
+    const validUsername = await verifyUser(username, password);
 
-    if (user) {
-      // User credentials are valid
-      // Generate a JSON token and send it back to the client
-      const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET_KEY);
+    // User credentials are valid.
+    if (validUsername) {
+      // Generate a JSON token and send it back to the client.
+      const token = jwt.sign({ username: validUsername }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
       res.json({ token });
+    // Invalid credentials.
     } else {
-      // Invalid credentials
       res.status(401).json({ error: 'Invalid credentials' });
     }
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

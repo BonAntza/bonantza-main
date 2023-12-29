@@ -30,16 +30,11 @@ export default {
         if (response.ok) {
           const data = await response.json();
           const token = data.token;
-
-          console.log('Authentication successful. Token:', token);
-          // Store the received JSON token securely (e.g., in local storage or a cookie)
           localStorage.setItem('authToken', token);
-          // Redirect the user to the authenticated area or perform other actions as needed
+          // Redirect with a successful login.
           this.$router.push('/authenticated-page')
         } else {
-          // Handle login failure (e.g., show an error message)
           alert("NO ACCESS");
-          console.error('Authentication failed.');
         }
       } catch (error) {
         // Handle unexpected errors

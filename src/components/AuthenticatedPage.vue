@@ -10,37 +10,17 @@
 </template>
 
 <script>
+import CheckAccessMixin from '../../api/utilities/checkAccessMixin';
+
 export default {
+  mixins: [CheckAccessMixin],
   data() {
     return {
       loading: true,
       error: null
     };
   },
-  mounted() {
-    this.checkAccess();
-  },
   methods: {
-    async checkAccess() {
-      try {
-        const response = await fetch('./api/verifyLogin', {
-          headers: {
-            'Authorization': localStorage.getItem('authToken')
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Access denied or token invalid');
-        }
-
-        // If the response is okay, the token is valid
-        this.loading = false;
-      } catch (error) {
-        this.error = error.message;
-        this.loading = false;
-        this.$router.push('/login'); // Redirect to login if token is invalid
-      }
-    },
     handleLogout() {
       localStorage.removeItem('authToken');
       this.$router.push('/');
