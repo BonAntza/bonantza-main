@@ -2,7 +2,7 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
   </div>
-  <div id="calendar">
+  <div id="navbar">
     <PageLink 
       v-for="link in links" 
       :key="link.text" 
@@ -30,6 +30,7 @@ export default {
         { text: "WebDevPortfolio" },
         { text: "Authentication" },
         { text: "Ammokrates" },
+        { text: "Calendar" }
       ]
     }
   },
@@ -39,6 +40,11 @@ export default {
         case 'Authentication': {
           const isLoggedIn = localStorage.getItem('authToken') !== null;
           this.$router.push(isLoggedIn ? '/authenticated-page' : '/login');
+          break;
+        }
+        case 'Calendar': {
+          const isLoggedIn = localStorage.getItem('authToken') !== null;
+          this.$router.push(isLoggedIn ? '/calendar' : '/login');
           break;
         }
       }

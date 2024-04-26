@@ -50,7 +50,6 @@ const verifyUser = async (username, password) => {
 module.exports = async (req, res) => {
   try {
     const { username, password } = req.body;
-
     const validUsername = await verifyUser(username, password);
 
     // User credentials are valid.
