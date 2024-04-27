@@ -3,5 +3,5 @@ module.exports = {
     externals: {
       './scripts/generateSalt.js': 'commonjs ./scripts/generateSalt.js'
     }
-  }
+  },
 };

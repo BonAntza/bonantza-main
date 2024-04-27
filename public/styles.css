@@ -1,0 +1,67 @@
+:root {
+  --text-color-light: #efefef;
+  --text-color-dark: #323232;
+  --text-color-link: #d0846d;
+  --bg-color-default: rgb(46 44 54 / 70%);
+  --bg-color-dark: hsl(252deg 10% 19% / 85%);
+  --anim-hover-change: 300ms linear;
+  --button-bg-color: linear-gradient(10deg, rgb(61 68 108) 0%, rgb(78 83 137) 36%, rgb(87 97 141) 64%, rgb(85 99 133) 100%);
+  --button-hover-color: rgb(109, 109, 158);
+  --bg-color-dark-opaque: hsl(252deg 10% 19% / 100%);
+  --border-color-dark: #363642;
+  --border-color-hovered: #505184;
+  --border-color-selected: rgb(105 121 172);
+  --font-family: 'Kanit', sans-serif;
+  --button-color: #4d4df7;
+  --button-color-hover: #7171f1;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+}
+
+#page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text-color-light);
+  height: 100%;
+  width: 100%;
+}
+
+a {
+  color: var(--text-color-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: var(--font-family);
+  font-size: 1.2em;
+  background-color: var(--button-color);
+  border: none;
+  border-radius: 0.2em;
+  cursor: pointer;
+  padding: 0.5em 1em;
+}
+
+button:hover {
+  background-color: var(--button-color-hover);
+}
+
+input {
+  font-size: 1.2em;
+  border: none;
+  margin-right: 0.5em;
+  padding: 0.5em;
+  font-family: var(--font-family);
+  border-radius: 0.2em;
+}
