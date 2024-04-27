@@ -1,31 +1,23 @@
 <template>
   <div id="calendar">
-      <div v-if="error">{{ error }}</div>
-      <div v-else>Kalenteri.</div>
-      <div id="main-page-link"><a href="./">Main page.</a></div>
+      <div v-if="!error.value">
+        Suksee.
+        <div id="main-page-link"><a href="./">Main page.</a></div>
+      </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useAuth } from '../../api/utilities/useAuth';
 import { useRouter } from 'vue-router';
-import { checkAccess } from '../../api/utilities/checkAccess.js';
 const router = useRouter();
-const error = ref(null);
-const loading = ref(true);
 
-(async () => {
-  try {
-    const authToken = localStorage.getItem('authToken');
-    await checkAccess(authToken);
-    loading.value = false;
-  } catch (err) {
-    console.log(err);
-    error.value = err.message;
-    loading.value = false;
-    router.push('/login');
-  }
-})();
+const { error, loading, authenticate } = useAuth();
+
+onMounted(async () => {
+  await authenticate();
+});
 
 </script>
 <style>

@@ -10,22 +10,21 @@
   </div>
 </template>
 
-<script>
-import CheckAccessMixin from '../../api/utilities/checkAccessMixin';
+<script setup>
+import { onMounted } from 'vue';
+import { useAuth } from '../../api/utilities/useAuth';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
-export default {
-  mixins: [CheckAccessMixin],
-  data() {
-    return {
-      loading: true,
-      error: null
-    };
-  },
-  methods: {
-    handleLogout() {
-      localStorage.removeItem('authToken');
-      this.$router.push('/');
-    }
-  }
-};
+const { error, loading, authenticate } = useAuth();
+
+onMounted(async () => {
+  await authenticate();
+});
+
+const handleLogout = () => {
+  localStorage.removeItem('authToken');
+  router.push('/');
+}
+
 </script>

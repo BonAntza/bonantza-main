@@ -47,6 +47,9 @@ export default {
           this.$router.push(isLoggedIn ? '/calendar' : '/login');
           break;
         }
+        case 'Ammokrates': {
+          window.open('https://www.ammokrates.com', '_blank');
+        }
       }
     },
   }
