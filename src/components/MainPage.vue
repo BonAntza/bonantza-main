@@ -1,7 +1,4 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-  </div>
   <div id="navbar">
     <PageLink 
       v-for="link in links" 
@@ -13,48 +10,42 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import PageLink from './uielems/PageLink.vue'
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
-export default {
-  name: 'MainPage',
-  props: {
-    msg: String
-  },
-  components: {
-    PageLink
-  },
-  data() {
-    return {
-      links: [
-        { text: "GameDevPortfolio" },
-        // { text: "WebDevPortfolio" },
-        { text: "Ammokrates", icon: true },
-        { text: "Calendar" },
-        { text: "Log in" },
-      ]
+const links = [
+  // Note: the first two are not in use yet.
+  { text: "GameDevPortfolio" },
+  { text: "WebDevPortfolio" },
+  { text: "Ammokrates", icon: true },
+  { text: "Calendar" },
+  { text: "Log in" },
+];
+
+/**
+ * Handle link clicks and routing.
+ * @param {String} linkText - forward user to different urls for a given link text.
+ */
+const handleClick = (linkText) => {
+  switch (linkText) {
+    case 'Log in': {
+      const isLoggedIn = localStorage.getItem('authToken') !== null;
+      router.push(isLoggedIn ? '/authenticated-page' : '/login');
+      break;
     }
-  },
-  methods: {
-    handleClick(linkText) {
-      switch (linkText) {
-        case 'Log in': {
-          const isLoggedIn = localStorage.getItem('authToken') !== null;
-          this.$router.push(isLoggedIn ? '/authenticated-page' : '/login');
-          break;
-        }
-        case 'Calendar': {
-          const isLoggedIn = localStorage.getItem('authToken') !== null;
-          this.$router.push(isLoggedIn ? '/calendar' : '/login');
-          break;
-        }
-        case 'Ammokrates': {
-          window.open('https://www.ammokrates.com', '_blank');
-        }
-      }
-    },
+    case 'Calendar': {
+      const isLoggedIn = localStorage.getItem('authToken') !== null;
+      router.push(isLoggedIn ? '/calendar' : '/login');
+      break;
+    }
+    // Note: external link.
+    case 'Ammokrates': {
+      window.open('https://www.ammokrates.com', '_blank');
+    }
   }
-}
+};
 </script>
 
 <style>

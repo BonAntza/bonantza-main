@@ -7,13 +7,19 @@ const pool = new Pool({
   }
 });
 
+/**
+ * An upsert function to save notes for a given day.
+ */
 module.exports = async (req, res) => {
   const { date, notes } = req.body;
-  
+
+  // TODO: date validation and notes sanitation.
+
   if (!date) {
     return res.status(400).json({ error: 'Date parameter is required' });
   }
 
+  // If day's notes already exist, do an update instead.
   const query = `
       INSERT INTO day_notes (day, notes)
       VALUES ($1, $2)

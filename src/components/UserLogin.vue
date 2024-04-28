@@ -9,37 +9,38 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      password: ''
-    };
-  },
-  methods: {
-    async handleLogin() {
-      try {
-        const response = await fetch('/api/auth', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: this.username, password: this.password })
-        });
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
-        if (response.ok) {
-          const data = await response.json();
-          const token = data.token;
-          localStorage.setItem('authToken', token);
-          // Redirect with a successful login.
-          this.$router.push('/authenticated-page')
-        } else {
-          alert("NO ACCESS");
-        }
-      } catch (error) {
-        // Handle unexpected errors
-        console.error(error);
-      }
+const username = ref('');
+const password = ref('');
+
+/**
+ * Handle login attempt. Sends given username and password to api for validation. On succesful login forwards user to the authenticated page. 
+ */
+const handleLogin = async () => {
+  try {
+    const response = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: username.value, password: password.value })
+    });
+
+    // Redirect with a successful login.
+    if (response.ok) {
+      const data = await response.json();
+      const token = data.token;
+      localStorage.setItem('authToken', token);
+      router.push('/authenticated-page');
+    // Wrong username and/or password.
+    } else {
+      alert("NO ACCESS");
     }
+  } catch (error) {
+    // Handle unexpected errors.
+    console.error(error);
   }
 };
 </script>

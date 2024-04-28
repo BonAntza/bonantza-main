@@ -7,9 +7,14 @@ const pool = new Pool({
   }
 });
 
+/**
+ * Fetch notes for a single given day.
+ */
 module.exports = async (req, res) => {
   const { date } = req.query;
-  
+
+  // TODO: date validation.
+
   if (!date) {
     return res.status(400).json({ error: 'Date parameter is required' });
   }

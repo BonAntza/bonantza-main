@@ -1,9 +1,12 @@
+/**
+ * API endpoint for login (serverless function).
+ */
+
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const CIPHER = process.env.CIPHER;
 
-// Database pool
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: {
@@ -11,16 +14,12 @@ const pool = new Pool({
   }
 });
 
-const getUserDataByUsername = async (username) => {
-  try {
-    const query = "SELECT * FROM users WHERE username = $1";
-    const { rows } = await pool.query(query, [username]);
-    return rows.length > 0 ? rows[0] : null;
-  } catch (err) {
-    throw err;
-  }
-};
-
+/**
+ * Gets userdata for a given username and checks if the password is a match.
+ * @param String username 
+ * @param String password 
+ * @returns String - Username upon succesfull verification, null otherwise.
+ */
 const verifyUser = async (username, password) => {
 
   // Admin authentication.
@@ -29,8 +28,11 @@ const verifyUser = async (username, password) => {
   }
 
   try {
-    const user = await getUserDataByUsername(username);
+    const query = "SELECT * FROM users WHERE username = $1";
+    const { rows } = await pool.query(query, [username]);
+    const user = rows.length > 0 ? rows[0] : null;
 
+    // Username found, check the password.
     if (user) {
       const combinedValue = user.guardian + CIPHER + password;
       const isMatch = await bcrypt.compare(combinedValue, user.hash);
@@ -47,6 +49,9 @@ const verifyUser = async (username, password) => {
   }
 };
 
+/**
+ * API authorization endpoint for login.
+ */
 module.exports = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -55,9 +60,9 @@ module.exports = async (req, res) => {
     // User credentials are valid.
     if (validUsername) {
       // Generate a JSON token and send it back to the client.
+      // TODO: token refresh needs to be implemented.
       const token = jwt.sign({ username: validUsername }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
       res.json({ token });
-    // Invalid credentials.
     } else {
       res.status(401).json({ error: 'Invalid credentials' });
     }

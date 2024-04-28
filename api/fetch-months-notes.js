@@ -7,14 +7,20 @@ const pool = new Pool({
   }
 });
 
+/**
+ * Returns all existing notes in a month. Fetches notes for the month in a given date variable.
+ */
 module.exports = async (req, res) => {
-  const { date } = req.query; // Expected in 'YYYY-MM-DD' format
+  const { date } = req.query;
+
+  // TODO: date validation.
 
   if (!date) {
     return res.status(400).json({ error: 'Date parameter is required' });
   }
 
   try {
+    // The notes text must not be empty. Return all dates in the month that have some existing notes text.
     const query = `
       SELECT TO_CHAR(day, 'YYYY-MM-DD') as formatted_day
       FROM day_notes

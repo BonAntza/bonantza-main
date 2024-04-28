@@ -3,7 +3,7 @@ import UserLogin from '../components/UserLogin.vue';
 import AuthenticatedPage from '../components/AuthenticatedPage.vue';
 import MainPage from '../components/MainPage.vue';
 import CalendarApp from '../components/CalendarApp.vue';
-import { isAuthenticated } from '../../api/utilities/useAuth';
+import { isAuthenticated } from '../../api/utilities/checkAccess';
 
 const routes = [
   { path: '/', component: MainPage },
@@ -25,6 +25,9 @@ const router = createRouter({
   routes
 });
 
+/**
+ * For links, that requires authentication; check that user has logged in, else forward to login page.
+ */
 router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (await isAuthenticated()) {

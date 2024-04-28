@@ -12,6 +12,9 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
+/**
+ * Upon logging out, the authorization token is emptied and user forwarded to the main page.
+ */
 const handleLogout = () => {
   localStorage.removeItem('authToken');
   router.push('/');

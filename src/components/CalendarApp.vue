@@ -35,10 +35,10 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
-/* eslint no-unused-vars: "off" */
+
 import { getNumberOfDaysInMonth, getThisMonthsDays, getMonthsFirstWeekDay, getLastMonthsDays, getNextMonthsDays, groupDaysToWeeks, convertDate } from '../utilities/date';
-import DayBlock from './DayBlock.vue';
-import DaysNotes from './DaysNotes.vue';
+import DayBlock from './uielems/DayBlock.vue';
+import DaysNotes from './uielems/DaysNotes.vue';
 
 const date = ref(new Date());
 const selYear = ref(date.value.getFullYear());
@@ -215,4 +215,4 @@ const handleRefresh = (callback) => {
 .saved-notes {
   background-color: var(--bg-color-daily-notes);
 }
-</style>./DaysNotes.vue
+</style>./DaysNotes.vue./uielems/DayBlock.vue./uielems/DaysNotes.vue

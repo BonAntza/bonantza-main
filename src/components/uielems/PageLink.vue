@@ -13,6 +13,7 @@
 
 const props = defineProps({
   linkText: String,
+  // Note: currently only an external link icon is supported.
   icon: Boolean
 });
 

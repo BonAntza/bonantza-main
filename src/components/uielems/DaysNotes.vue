@@ -1,6 +1,9 @@
 <template>
   <div id="notes">
-    <div id="selected-date"><span>{{ date }}</span><div v-if="isDisabled" class="loader"></div></div>
+    <div id="selected-date">
+      <span>{{ date }}</span>
+      <div v-if="isDisabled" class="loader"></div>
+    </div>
     <div id="days-notes">
       <textarea v-model="notes" :class="{'textarea-disabled': isDisabled}" :disabled="isDisabled">{{ notes }}</textarea>
       <button :class="{'button-disabled': isDisabled}" @click="saveNotes">Save</button>
@@ -10,7 +13,7 @@
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
-import { convertDate } from '../utilities/date';
+import { convertDate } from '../../utilities/date';
 import axios from 'axios';
 
 const props = defineProps({
@@ -19,38 +22,45 @@ const props = defineProps({
 });
 
 const emit = defineEmits('refreshCalendar');
-
-const isDisabled = ref(true);
 const notes = ref('');
 const date = computed(() => convertDate(props.day));
 const dbDate = computed(() => convertDate(props.day, 'db'));
+// The textarea is disabled whenever the program is fetching or saving data. 
+const isDisabled = ref(true);
 
+/**
+ * Loads notes for the selected day.
+ */
 const loadNotes = async () => {
   isDisabled.value = true;
 
-  const url = `./api/fetch-notes?date=${dbDate.value}`;
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(`./api/fetch-notes?date=${dbDate.value}`);
     // No notes found for the date.
     if (response.data.message) {
       notes.value = '';
     } else {
       notes.value = response.data;
     }
+
     isDisabled.value = false;
   } catch (error) {
     console.error(error);
   }
 };
 
+/**
+ * Saves notes to database for the selected day.
+ */
 const saveNotes = async() => {
   isDisabled.value = true;
 
-  const response = await axios.post('./api/save-notes', {
+  await axios.post('./api/save-notes', {
     date: dbDate.value,
     notes: notes.value
   });
 
+  // Emit a refresh call so the parent will know to reload the calendar with updated visuals.
   emit('refreshCalendar', () => {
     isDisabled.value = false;
   });
@@ -58,13 +68,13 @@ const saveNotes = async() => {
 
 onMounted(loadNotes);
 
+// Day selection changes; empty the notes and load new day's notes (if any are found).
 watch(() => props.day, (newDay, oldDay) => {
   if (newDay != oldDay) {
     notes.value = '';
     loadNotes();
   }
 });
-
 </script>
 
 <style scoped>
