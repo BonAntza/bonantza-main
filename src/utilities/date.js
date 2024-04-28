@@ -32,8 +32,16 @@ export function getLastMonthsDays(year, month, days) {
 export function getThisMonthsDays(year, month, days) {
   const thisMonthsDays = [];
 
-  for (let i = 1; i < days + 1; i++) {
-    const dayData = {'ui': i, 'data': year + '-' + (month + 1) + '-' + i, 'currentMonth': true};
+  for (let i = 1; i <= days; i++) {
+
+    const dayFormatted = String(i).padStart(2, '0');
+    const monthFormatted = String(month + 1).padStart(2, '0');
+
+    const dayData = {
+      'ui': i, 
+      'data': `${year}-${monthFormatted}-${dayFormatted}`, 
+      'currentMonth': true
+    };
     thisMonthsDays.push(dayData);
   }
 
@@ -72,6 +80,20 @@ export function groupDaysToWeeks(days) {
   }
 
   return groupedDays;
+}
+
+export function convertDate(date, format = '') {
+  const offset = date.getTimezoneOffset();
+  const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+  if (format === 'db') {
+    return localDate.toISOString().split('T')[0];
+  } else {
+    const day = localDate.getDate().toString().padStart(2, '0');
+    const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = localDate.getFullYear();
+
+    return `${day}.${month}.${year}`;
+  }
 }
 
 function convertToISO8601Week(weekDay) {

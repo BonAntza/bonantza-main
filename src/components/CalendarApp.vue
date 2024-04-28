@@ -20,12 +20,13 @@
           </div>
         </div>
         <div v-for="week in calendarDays" class="week" :key="week">
-          <DayBlock v-for="day in week" @click="selectDay(day.data)" :dayNumber="day.ui" :dataDate="day.data" :class="{'day': true, 'current-month': day.currentMonth ? 'current-month' : '', 'selected': day.data === selectedDay}" />
+          <DayBlock v-for="day in week" @click="selectDay(day.data)" :dayNumber="day.ui" :dataDate="day.data" :class="{'day': true, 'saved-notes': dailyNotes.includes(day.data), 'current-month': day.currentMonth ? 'current-month' : '', 'selected': day.data === selectedDay}" />
         </div>
-        <div v-if="calendarDays.length < 6" class="no-week week" :key="noWeek">
+        <div v-if="calendarDays.length < 6" class="extra-week week" :key="'extra-week'">
           <DayBlock v-for="day in 7" :dayNumber="null" :dataDate="null" class="no-day" />
         </div>
       </div>
+      <DaysNotes @refreshCalendar="handleRefresh" :day="date" />
     </div>
     <div id="main-page-link"><a href="./">Back to Main page</a></div>
   </div>
@@ -33,14 +34,17 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
+import axios from 'axios';
 /* eslint no-unused-vars: "off" */
-import { getNumberOfDaysInMonth, getThisMonthsDays, getMonthsFirstWeekDay, getLastMonthsDays, getNextMonthsDays, groupDaysToWeeks } from '../utilities/date';
+import { getNumberOfDaysInMonth, getThisMonthsDays, getMonthsFirstWeekDay, getLastMonthsDays, getNextMonthsDays, groupDaysToWeeks, convertDate } from '../utilities/date';
 import DayBlock from './DayBlock.vue';
+import DaysNotes from './DaysNotes.vue';
 
 const date = ref(new Date());
 const selYear = ref(date.value.getFullYear());
 const selMonth = ref(date.value.getMonth()); 
 const calendarDays = ref([]);
+const dailyNotes = ref([]);
 
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const weekDays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
@@ -63,7 +67,7 @@ watch(selYear, () => {
 /**
  * Initialize calendar on page load and every time user changes year or month.
  */
-const initializeCalendar = () => {
+const initializeCalendar = async (callback) => {
   // Get weekday (0 = Monday, 1 = Tuesday etc.). This is also the number of days to show in the last month.
   const firstWeekday = getMonthsFirstWeekDay(selYear.value, selMonth.value); 
   const numberOfDaysInMonth = getNumberOfDaysInMonth(selYear.value, selMonth.value);
@@ -74,10 +78,20 @@ const initializeCalendar = () => {
   const nextMonthsDays = getNextMonthsDays(selYear.value, selMonth.value, numberOfDaysInMonth);
 
   calendarDays.value = groupDaysToWeeks([...lastMonthsDays, ...thisMonthsDays, ...nextMonthsDays]);
+
+  // Get the indicators for all saved daily notes for the calendar.
+  const dbDate = convertDate(date.value, 'db');
+  
+  const response = await axios.get(`./api/fetch-months-notes?date=${dbDate}`);
+  dailyNotes.value = response.data;
+
+  if (callback) callback();
 };
 
 const selectDay = (day) => {
   selectedDay.value = day;
+  const parts = day.split('-');
+  date.value = new Date(parts[0], parts[1] - 1, parts[2]);
 }
 
 const selectMonthOrYear = (year, month) => {
@@ -91,6 +105,10 @@ const selectMonthOrYear = (year, month) => {
 
   initializeCalendar();
 }
+
+const handleRefresh = (callback) => {
+  initializeCalendar(callback);
+};
 </script>
 
 <style scoped>
@@ -121,7 +139,7 @@ const selectMonthOrYear = (year, month) => {
   height: fit-content;
   width: fit-content;
   align-self: center;
-  padding: 1.5em 1.5em 1.5em 0;
+  padding: 1.5em 0 1.5em 0;
 }
 
 #main-page-link {
@@ -143,7 +161,7 @@ const selectMonthOrYear = (year, month) => {
   display: flex;
 }
 
-.no-week {
+.extra-week {
   visibility: hidden;
 }
 
@@ -193,4 +211,8 @@ const selectMonthOrYear = (year, month) => {
     transition: opacity var(--anim-hover-change);
     opacity: 1;
 }
-</style>
+
+.saved-notes {
+  background-color: var(--bg-color-daily-notes);
+}
+</style>./DaysNotes.vue

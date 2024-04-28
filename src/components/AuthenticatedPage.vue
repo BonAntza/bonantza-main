@@ -1,7 +1,6 @@
 <template>
   <div id="authenticated-page">
     <div id="authenticated-content">
-
       Congratulations! You have access to protected content.
       <div id="calendar-link">To the <a href="./calendar">calendar</a>.</div>
     </div>
@@ -17,7 +16,6 @@ const handleLogout = () => {
   localStorage.removeItem('authToken');
   router.push('/');
 }
-
 </script>
 
 <style scoped>
