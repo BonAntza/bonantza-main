@@ -50,6 +50,8 @@ const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
 const weekDays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 const selectedDay = ref(selYear.value + '-' + (selMonth.value + 1) + '-' + date.value.getDate());
 
+axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('authToken')}`;
+
 onMounted(() => {
   initializeCalendar();
 });

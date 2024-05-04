@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const { hasAccess } = require('../api/utilities/hasAccess');
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -11,6 +12,13 @@ const pool = new Pool({
  * Returns all existing notes in a month. Fetches notes for the month in a given date variable.
  */
 module.exports = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!await hasAccess(token)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   const { date } = req.query;
 
   // TODO: date validation.
@@ -33,7 +41,6 @@ module.exports = async (req, res) => {
 
     res.status(200).json(datesWithNotes);
   } catch (err) {
-    console.error('Failed to query notes:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

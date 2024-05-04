@@ -28,6 +28,8 @@ const dbDate = computed(() => convertDate(props.day, 'db'));
 // The textarea is disabled whenever the program is fetching or saving data. 
 const isDisabled = ref(true);
 
+axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('authToken')}`;
+
 /**
  * Loads notes for the selected day.
  */
@@ -42,10 +44,10 @@ const loadNotes = async () => {
     } else {
       notes.value = response.data;
     }
-
-    isDisabled.value = false;
   } catch (error) {
     console.error(error);
+  } finally {
+    isDisabled.value = false;
   }
 };
 

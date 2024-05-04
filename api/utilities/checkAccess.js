@@ -2,22 +2,17 @@
  * Helper function to check if user is authenticated. 
  * @returns Boolean - True if authenticated, false otherwise.
  */
-export const isAuthenticated = async () => {
-  try {
-    const authToken = localStorage.getItem('authToken');
+export const isAuthenticated = () => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    return false;
+  }
 
-    const response = await fetch('./api/utilities/verifyToken', {
-      headers: {
-        'Authorization': authToken
-      }
-    });
-  
-    if (!response.ok) {
-      throw new Error('Access denied!');
-    }
-  
-    return true;
+  try {
+    const { exp } = JSON.parse(atob(token.split('.')[1]));
+    return exp > Date.now() / 1000;
   } catch (error) {
-      return false;
+    console.error('Failed to decode token:', error);
+    return false;
   }
 }
