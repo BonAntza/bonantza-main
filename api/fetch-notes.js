@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 const { hasAccess } = require('../api/utilities/hasAccess');
+const { validateDate } = require('../api/utilities/validation');
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -21,10 +22,9 @@ module.exports = async (req, res) => {
 
   const { date } = req.query;
 
-  // TODO: date validation.
-
-  if (!date) {
-    return res.status(400).json({ error: 'Date parameter is required' });
+  // Date validation.
+  if (!date || !validateDate(date)) {
+    return res.status(400).json({ error: 'Invalid or missing date parameter. Required format: YYYY-MM-DD' });
   }
 
   try {

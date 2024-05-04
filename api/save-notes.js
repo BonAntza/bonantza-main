@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 const { hasAccess } = require('../api/utilities/hasAccess');
+const { validateDate, sanitizeNotes } = require('../api/utilities/validation');
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -21,10 +22,15 @@ module.exports = async (req, res) => {
 
   const { date, notes } = req.body;
 
-  // TODO: date validation and notes sanitation.
+  // Date validation.
+  if (!date || !validateDate(date)) {
+    return res.status(400).json({ error: 'Invalid or missing date parameter. Required format: YYYY-MM-DD' });
+  }
 
-  if (!date) {
-    return res.status(400).json({ error: 'Date parameter is required' });
+  const sanitizedNotes = sanitizeNotes(notes); 
+
+  if (notes.length > 1000) {
+    return res.status(400).json({ error: 'Notes exceed maximum length allowed.' });
   }
 
   // If day's notes already exist, do an update instead.
@@ -36,7 +42,7 @@ module.exports = async (req, res) => {
   `;
 
   try {
-    await pool.query(query, [date, notes]);
+    await pool.query(query, [date, sanitizedNotes]);
     res.status(200).send("Upsert successful!");
   } catch (err) {
     res.status(500).send('Failed to upsert notes');
