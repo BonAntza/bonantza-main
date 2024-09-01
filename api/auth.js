@@ -18,7 +18,7 @@ const pool = new Pool({
  * Gets userdata for a given username and checks if the password is a match.
  * @param String username 
  * @param String password 
- * @returns String - Username upon succesfull verification, null otherwise.
+ * @returns String - Username upon succesful verification, null otherwise.
  */
 const verifyUser = async (username, password) => {
 

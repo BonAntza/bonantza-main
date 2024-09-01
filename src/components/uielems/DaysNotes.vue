@@ -5,7 +5,7 @@
       <div v-if="isDisabled" class="loader"></div>
     </div>
     <div id="days-notes">
-      <textarea v-model="notes" :class="{'textarea-disabled': isDisabled}" :disabled="isDisabled">{{ notes }}</textarea>
+      <textarea id="notes-text" v-model="notes" :class="{'textarea-disabled': isDisabled}" :disabled="isDisabled">{{ notes }}</textarea>
       <button :class="{'button-disabled': isDisabled}" @click="saveNotes">Save</button>
     </div>
   </div>
